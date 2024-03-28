@@ -8,7 +8,7 @@ The implementation is roughly based on https://github.com/nothings/stb stb_ds.h 
 # USAGE
 
 To define the genereic use #define TYPE_ <your_type_here>    
-the type if the array is `ArrayList_<your_type_here>`    
+the type of the array is `ArrayList_<your_type_here>`    
 
 ```c
 #include <assert.h>
