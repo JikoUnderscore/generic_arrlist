@@ -45,7 +45,9 @@ int main(){
 	arrlist_put_char(&str, 'l');
 	arrlist_put_char(&str, 'd');
 	arrlist_put_char(&str, '\0');
-	
+
 	printf("%s\n", str.data);
+
+	arrlist_deinit_char(&str);
 }
 ```
