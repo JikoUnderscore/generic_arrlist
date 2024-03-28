@@ -4,7 +4,7 @@
 /// 
 /// How to use
 /// To define the genereic use #define TYPE_ <your_type_here>
-/// the type if the array is `ArrayList_<your_type_here>`
+/// the type of the array is `ArrayList_<your_type_here>`
 ///
 /// Example:
 /// // array_int.c
