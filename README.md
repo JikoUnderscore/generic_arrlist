@@ -7,7 +7,7 @@ The implementation is based on https://github.com/nothings/stb stb_ds.h  dynamic
 
 # USAGE
 
-`c
+```c
 #define TYPE_ int
 #define IMPL_ARRAYLIST_
 #include "generic_arr.stb_ds.h"
@@ -25,5 +25,22 @@ int main(){
 	assert(arr.data[2] == 'd');
 	assert(arr.data[3] == 'e');
 	arrlist_void_deinit_int(&arr);
+	
+	auto str = arrlist_init_char();
+	
+	arrlist_put_char(&str, 'H');
+	arrlist_put_char(&str, 'e');
+	arrlist_put_char(&str, 'l');
+	arrlist_put_char(&str, 'l');
+	arrlist_put_char(&str, 'o');
+	arrlist_put_char(&str, ' ');
+	arrlist_put_char(&str, 'W');
+	arrlist_put_char(&str, 'o');
+	arrlist_put_char(&str, 'r');
+	arrlist_put_char(&str, 'l');
+	arrlist_put_char(&str, 'd');
+	arrlist_put_char(&str, '\0');
+	
+	printf("%s\n", str.data);
 }
-`
+```
