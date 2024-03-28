@@ -46,6 +46,9 @@ extern "C" {
 #endif
 
 
+#define gb_alloc_array(Type, count) (Type*)malloc(sizeof(Type) * (count))
+
+
 #define gb_max(a, b) ((a) > (b) ? (a) : (b))
 
 #if !defined(TYPE_)
@@ -452,6 +455,9 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static 1], size_t elem_size, s
 #undef arrlist_set_len2
 #undef arrlist_set_len
 #undef gb_max
+#undef TYPE_
+#undef IMPL_ARRAYLIST_
+#undef gb_alloc_array
 
 
 #endif // IMPL_ARRAYLIST_
