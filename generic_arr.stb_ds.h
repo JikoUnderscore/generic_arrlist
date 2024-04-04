@@ -1,31 +1,32 @@
-/// 
-/// !!! C23 ONLY !!!
-/// 
-/// 
-/// How to use
-/// To define the genereic use #define TYPE_ <your_type_here>
-/// the type of the array is `ArrayList_<your_type_here>`
-///
-/// Example:
-/// // array_int.c
-/// #define TYPE_ int
-/// #define IMPL_ARRAYLIST_
-/// #include "generic_arr.stb_ds.h"
-///
-///
-/// int main(){
-///     auto arr = arrlist_init_int();
-///     for (char i = {}; i < 26; ++i) {
-///         arrlist_put_int(&arr, 'a' + i);
-///     }
-///     arrlist_del_int(&arr, 2); // removes 'c'
-///     assert(arr.len == 25);
-///     assert(arr.data[0] == 'a');
-///     assert(arr.data[1] == 'b');
-///     assert(arr.data[2] == 'd');
-///     assert(arr.data[3] == 'e');
-///     arrlist_void_deinit_int(&arr);
-/// }
+/* 
+!!! C23 ONLY !!!
+
+
+How to use
+To define the genereic use #define TYPE_ <your_type_here>
+the type of the array is `ArrayList_<your_type_here>`
+
+Example:
+// array_int.c
+#define TYPE_ int
+#define IMPL_ARRAYLIST_
+#include "generic_arr.stb_ds.h"
+
+
+int main(){
+    auto arr = arrlist_init_int();
+    for (char i = {}; i < 26; ++i) {
+        arrlist_put_int(&arr, 'a' + i);
+    }
+    arrlist_del_int(&arr, 2); // removes 'c'
+    assert(arr.len == 25);
+    assert(arr.data[0] == 'a');
+    assert(arr.data[1] == 'b');
+    assert(arr.data[2] == 'd');
+    assert(arr.data[3] == 'e');
+    arrlist_void_deinit_int(&arr);
+}
+ */
 
 
 #include <stddef.h>
