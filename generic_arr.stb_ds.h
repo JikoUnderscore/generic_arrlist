@@ -28,7 +28,6 @@ int main(){
 }
  */
 
-
 #include <stddef.h>
 
 
@@ -47,10 +46,10 @@ extern "C" {
 #endif
 
 
-#define gb_alloc_array(Type, count) (Type*)malloc(sizeof(Type) * (count))
+#define ga_alloc_array(Type, count) (Type*)malloc(sizeof(Type) * (count))
 
 
-#define gb_max(a, b) ((a) > (b) ? (a) : (b))
+#define ga_max(a, b) ((a) > (b) ? (a) : (b))
 
 #if !defined(TYPE_)
 #error "Define TYPE_ macro to be the type of the array"
@@ -162,12 +161,12 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static 1], size_t n);
 #include <string.h>
 
 
-#define ARRAY_GROW_FORMULA(x) (gb_max(((x) + 1U) * 3U >> 1U, 8U))
+#define ARRAY_GROW_FORMULA(x) (ga_max(((x) + 1U) * 3U >> 1U, 8U))
 
 ArrayListOfT arrlist_init(TYPE_)(void) {
     size_t capacity = ARRAY_GROW_FORMULA(0U);
     ArrayListOfT array = {};
-    array.data = gb_alloc_array(TYPE_, capacity);
+    array.data = ga_alloc_array(TYPE_, capacity);
     array.len = 0;
     array.capacity = capacity;
     return array;
@@ -176,7 +175,7 @@ ArrayListOfT arrlist_init(TYPE_)(void) {
 
 ArrayListOfT arrlist_init1(TYPE_)(size_t count) {
     ArrayListOfT array = {};
-    array.data = gb_alloc_array(TYPE_, count);
+    array.data = ga_alloc_array(TYPE_, count);
     array.len = count;
     array.capacity = count;
     return array;
@@ -184,7 +183,7 @@ ArrayListOfT arrlist_init1(TYPE_)(size_t count) {
 
 ArrayListOfT arrlist_init2(TYPE_)(size_t count, size_t capacity) {
     ArrayListOfT array = {};
-    array.data = gb_alloc_array(TYPE_, capacity);
+    array.data = ga_alloc_array(TYPE_, capacity);
     array.len = count;
     array.capacity = capacity;
     return array;
@@ -455,10 +454,10 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static 1], size_t elem_size, s
 #undef arrlist_set_capacity
 #undef arrlist_set_len2
 #undef arrlist_set_len
-#undef gb_max
+#undef ga_max
 #undef TYPE_
 #undef IMPL_ARRAYLIST_
-#undef gb_alloc_array
+#undef ga_alloc_array
 
 
 #endif // IMPL_ARRAYLIST_
@@ -466,79 +465,6 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static 1], size_t elem_size, s
 #ifdef UNIT_TESTS_
 #include <assert.h>
 #include <stdio.h>
-
-
-// void unit_test(void) {
-//     printf("running unit_test..\n");
-//     auto arr = arrlist_init_int();
-//     int i;
-//     int j;
-//     assert(arr.len == 0);
-//     for (i = 0; i < 20000; i += 50) {
-//         for (j = 0; j < i; ++j) {
-//             // arrpush(arr, j);
-//             printf("001 cap %zu, len %zu\n", arr.capacity, arr.len);
-//             arrlist_put_int(&arr, j);
-//         }
-//         printf("002 cap %zu, len %zu\n", arr.capacity, arr.len);
-//         arrlist_deinit_int(&arr);
-//         // free(arr.data);
-//     }
-//     for (i = 0; i < 4; ++i) {
-//         // arrpush(arr, 1);
-//         // arrpush(arr, 2);
-//         // arrpush(arr, 3);
-//         // arrpush(arr, 4);
-//         arrlist_put_int(&arr, 1);
-//         arrlist_put_int(&arr, 2);
-//         arrlist_put_int(&arr, 3);
-//         arrlist_put_int(&arr, 4);
-//         // arrdel(arr, i);
-//         arrlist_del_int(&arr, i);
-//         // arrfree(arr);
-//         printf("101 cap %zu, len %zu\n", arr.capacity, arr.len);
-//         arrlist_deinit_int(&arr);
-//         // free(arr.data);
-//         // arrpush(arr, 1);
-//         // arrpush(arr, 2);
-//         // arrpush(arr, 3);
-//         // arrpush(arr, 4);
-//         arrlist_put_int(&arr, 1);
-//         arrlist_put_int(&arr, 2);
-//         arrlist_put_int(&arr, 3);
-//         arrlist_put_int(&arr, 4);
-//         // arrdelswap(arr, i);
-//         arrlist_del_swap_int(&arr, i);
-//         // arrfree(arr);
-//         printf("102 cap %zu, len %zu\n", arr.capacity, arr.len);
-//         // free(arr.data);
-//         arrlist_deinit_int(&arr);
-//     }
-//     for (i = 0; i < 5; ++i) {
-//         // arrpush(arr, 1);
-//         // arrpush(arr, 2);
-//         // arrpush(arr, 3);
-//         // arrpush(arr, 4);
-//         arrlist_put_int(&arr, 1);
-//         arrlist_put_int(&arr, 2);
-//         arrlist_put_int(&arr, 3);
-//         arrlist_put_int(&arr, 4);
-//         printf("201 cap %zu, len %zu\n", arr.capacity, arr.len);
-//         // stbds_arrins(arr, i, 5);
-//         arrlist_insert_int(&arr, i, 5);
-//         // STBDS_ASSERT(arr[i] == 5);
-//         assert(arr.data[i] == 5);
-//         printf("202 cap %zu, len %zu\n", arr.capacity, arr.len);
-//         if (i < 4) {
-//             assert(arr.data[4] == 4);
-//         }
-//         // arrfree(arr);
-//         // free(arr.data);
-//         arrlist_deinit_int(&arr);
-//     }
-// }
-
-#define FILELINE(fl)
 
 void more_tests(void) {
     {
