@@ -1,4 +1,4 @@
-/* 
+/*
 !!! C23 ONLY !!!
 
 
@@ -32,6 +32,7 @@ int main(){
 
 
 
+
 #ifdef UNIT_TESTS_
 #define TYPE_ int
 #endif // UNIT_TESTS_
@@ -56,7 +57,6 @@ extern "C" {
 #endif // TYPE_
 
 
-
 #define struct_arr_2(T) ArrayList_##T
 #define struct_arr(T)                                                                                                                                                              \
     typedef struct {                                                                                                                                                               \
@@ -71,7 +71,7 @@ extern "C" {
 
 #define arrlist_init29(T) arrlist_init_##T
 #define arrlist_init(T) arrlist_init29(T)
-#define arrlist_init12(T) arrlist_init1_##T
+#define arrlist_init12(T) arrlist_init_empty_##T
 #define arrlist_init1(T) arrlist_init12(T)
 #define arrlist_init22(T) arrlist_init2_##T
 #define arrlist_init2(T) arrlist_init22(T)
@@ -125,8 +125,8 @@ struct_arr(TYPE_);
 
 
 ArrayListOfT arrlist_init(TYPE_)(void);
-ArrayListOfT arrlist_init1(TYPE_)(size_t count);
-ArrayListOfT arrlist_init2(TYPE_)(size_t count, size_t capacity);
+ArrayListOfT arrlist_init1(TYPE_)(void);
+ArrayListOfT arrlist_init2(TYPE_)(size_t capacity);
 void arrlist_deinit(TYPE_)(ArrayListOfT arrlist[static 1]);
 void arrlist_void_deinit(TYPE_)(void* arrlist);
 [[nodiscard]] TYPE_ arrlist_pop(TYPE_)(ArrayListOfT arrlist[static 1]);
@@ -161,31 +161,28 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static 1], size_t n);
 #include <string.h>
 
 
-#define ARRAY_GROW_FORMULA(x) (ga_max(((x) + 1U) * 3U >> 1U, 8U))
-
 ArrayListOfT arrlist_init(TYPE_)(void) {
-    size_t capacity = ARRAY_GROW_FORMULA(0U);
-    ArrayListOfT array = {};
-    array.data = ga_alloc_array(TYPE_, capacity);
-    array.len = 0;
-    array.capacity = capacity;
+    size_t const capacity = 8;
+    ArrayListOfT array = {
+        .data = ga_alloc_array(TYPE_, capacity),
+        .len = 0,
+        .capacity = capacity,
+    };
     return array;
 }
 
 
-ArrayListOfT arrlist_init1(TYPE_)(size_t count) {
+ArrayListOfT arrlist_init1(TYPE_)(void) {
     ArrayListOfT array = {};
-    array.data = ga_alloc_array(TYPE_, count);
-    array.len = count;
-    array.capacity = count;
     return array;
 }
 
-ArrayListOfT arrlist_init2(TYPE_)(size_t count, size_t capacity) {
-    ArrayListOfT array = {};
-    array.data = ga_alloc_array(TYPE_, capacity);
-    array.len = count;
-    array.capacity = capacity;
+ArrayListOfT arrlist_init2(TYPE_)(size_t capacity) {
+    ArrayListOfT array = {
+        .data = ga_alloc_array(TYPE_, capacity),
+        .len = 0,
+        .capacity = capacity,
+    };
     return array;
 }
 
