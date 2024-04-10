@@ -30,10 +30,6 @@ int main(){
 
 #include <stddef.h>
 
-#define UNIT_TESTS_
-#define IMPL_ARRAYLIST_
-
-
 
 #ifdef UNIT_TESTS_
 #define TYPE_ int
@@ -50,9 +46,6 @@ extern "C" {
 
 
 #define ga_alloc_array(Type, count) (Type*)malloc(sizeof(Type) * (count))
-
-
-#define ga_max(a, b) ((a) > (b) ? (a) : (b))
 
 #if !defined(TYPE_)
 #error "Define TYPE_ macro to be the type of the array"
@@ -453,7 +446,6 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
 #undef arrlist_set_capacity
 #undef arrlist_set_len2
 #undef arrlist_set_len
-#undef ga_max
 #undef TYPE_
 #undef IMPL_ARRAYLIST_
 #undef ga_alloc_array
