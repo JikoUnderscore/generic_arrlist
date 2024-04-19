@@ -13,6 +13,7 @@ the type of the array is `ArrayList_<your_type_here>`
 ```c
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #define TYPE_ int
 #define IMPL_ARRAYLIST_
 #include "generic_arr.stb_ds.h"
