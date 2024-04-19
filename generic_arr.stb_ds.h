@@ -26,7 +26,7 @@ int main(){
     assert(arr.data[3] == 'e');
     arrlist_void_deinit_int(&arr);
 }
- */
+*/
 #include <stddef.h>
 
 
@@ -148,7 +148,6 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_
 #ifdef IMPL_ARRAYLIST_
 
 
-#include <stdlib.h>
 #include <string.h>
 
 
@@ -179,6 +178,7 @@ ArrayListOfT arrlist_init2(TYPE_)(size_t capacity, void* (*custom_malloc)(size_t
 
 
 void arrlist_deinit(TYPE_)(ArrayListOfT arrlist[static const restrict 1]) {
+#include <stdlib.h>
     free(arrlist->data);
     arrlist->data = nullptr;
     arrlist->len = 0;
@@ -192,7 +192,9 @@ void arrlist_deinit_unmanaged(TYPE_)(ArrayListOfT arrlist[static const restrict 
     arrlist->capacity = 0;
 }
 
+
 void arrlist_void_deinit(TYPE_)(void* arrlist) {
+#include <stdlib.h>
     ArrayListOfT* arli = (ArrayListOfT*)arrlist;
     free(arli->data);
     arli->data = nullptr;
@@ -229,11 +231,9 @@ void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ val
 /// (T) void arrput(T* a, T b);
 ///   Appends the item b to the end of array a. Returns b.
 void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const* const value, void* (*custom_realloc)(void* _Block, size_t _Size)) {
-    arrlist_meybe_grow(TYPE_)(arrlist, 1,custom_realloc);
+    arrlist_meybe_grow(TYPE_)(arrlist, 1, custom_realloc);
     arrlist->data[arrlist->len++] = *value;
 }
-
-
 
 
 ///  #define stbds_arrins(a, i, v) (stbds_arrinsn((a), (i), 1), (a)[i] = (v))
@@ -443,6 +443,7 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_
 #ifdef UNIT_TESTS_
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void more_tests(void) {
     {
@@ -525,7 +526,7 @@ void more_tests(void) {
         // }
         // printf("\n");
 
-        arrlist_deinit_unmanaged_int(&arr, free);
+        arrlist_deinit_int(&arr);
     }
     {
         printf("[TEST] running arrlist_remove\n");
@@ -543,7 +544,7 @@ void more_tests(void) {
         assert(arr.data[3] == 'e');
 
 
-        arrlist_deinit_unmanaged_int(&arr, free);
+        arrlist_void_deinit_int(&arr);
     }
 }
 #endif // UNIT_TESTS_
