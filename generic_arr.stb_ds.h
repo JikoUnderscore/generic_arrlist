@@ -141,6 +141,9 @@ void arrlist_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n
 void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t cap, void* (*custom_realloc)(void* _Block, size_t _Size));
 void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
 
+#ifndef IMPL_ARRAYLIST_
+#undef TYPE_
+#endif
 
 /// =======================                 =======================
 /// ======================= IMPL_ARRAYLIST_ =======================
