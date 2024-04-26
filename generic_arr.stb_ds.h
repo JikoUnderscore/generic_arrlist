@@ -147,6 +147,8 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_
 /// =======================                 =======================
 #ifdef IMPL_ARRAYLIST_
 
+TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t elem_size, size_t add_len, size_t min_cap, void* (*custom_realloc)(void* _Block, size_t _Size));
+
 
 #include <string.h>
 
