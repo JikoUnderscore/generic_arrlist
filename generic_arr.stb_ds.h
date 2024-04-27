@@ -125,21 +125,21 @@ void arrlist_deinit(TYPE_)(ArrayListOfT arrlist[static const restrict 1]);
 void arrlist_deinit_unmanaged(TYPE_)(ArrayListOfT arrlist[static const restrict 1], void (*custom_free)(void*));
 void arrlist_void_deinit(TYPE_)(void* arrlist);
 [[nodiscard]] TYPE_ arrlist_pop(TYPE_)(ArrayListOfT arrlist[static const restrict 1]);
-void arrlist_meybe_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ value, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const* const value, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_insert(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index, TYPE_ value, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_insert_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t p, size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
-size_t arrlist_add_index_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
+void arrlist_meybe_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t len_to_grow, void* (*custom_realloc)(void*, size_t));
+void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ value, void* (*custom_realloc)(void*, size_t));
+void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const* const value, void* (*custom_realloc)(void*, size_t));
+void arrlist_insert(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index, TYPE_ value, void* (*custom_realloc)(void*, size_t));
+void arrlist_insert_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t p, size_t n, void* (*custom_realloc)(void*, size_t));
+size_t arrlist_add_index_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void*, size_t));
 void arrlist_del_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index, size_t n);
 void arrlist_del(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index);
 [[nodiscard]] TYPE_ arrlist_del_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index);
-TYPE_* arrlist_add_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
+TYPE_* arrlist_add_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void*, size_t));
 void arrlist_del_swap(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index);
 [[nodiscard]] TYPE_ arrlist_del_swap_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index);
-void arrlist_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, size_t cap, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t cap, void* (*custom_realloc)(void* _Block, size_t _Size));
-void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size));
+void arrlist_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t len_to_grow, size_t cap, void* (*custom_realloc)(void*, size_t));
+void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t cap, void* (*custom_realloc)(void*, size_t));
+void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t len, void* (*custom_realloc)(void*, size_t));
 
 #ifndef IMPL_ARRAYLIST_
 #undef TYPE_
@@ -150,7 +150,7 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_
 /// =======================                 =======================
 #ifdef IMPL_ARRAYLIST_
 
-TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t elem_size, size_t add_len, size_t min_cap, void* (*custom_realloc)(void* _Block, size_t _Size));
+TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t));
 
 
 #include <string.h>
@@ -172,7 +172,7 @@ ArrayListOfT arrlist_init1(TYPE_)(void) {
     return array;
 }
 
-ArrayListOfT arrlist_init2(TYPE_)(size_t capacity, void* (*custom_malloc)(size_t)) {
+ArrayListOfT arrlist_init2(TYPE_)(size_t const capacity, void* (*custom_malloc)(size_t)) {
     ArrayListOfT array = {
         .data = (TYPE_*)custom_malloc(sizeof(TYPE_) * (capacity)),
         .len = 0,
@@ -217,16 +217,16 @@ void arrlist_void_deinit(TYPE_)(void* arrlist) {
 
 
 /// #define stbds_arrmaybegrow(a, n) ((!(a) || stbds_header(a)->length + (n) > stbds_header(a)->capacity) ? (stbds_arrgrow(a, n, 0), 0) : 0)
-void arrlist_meybe_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size)) {
-    if (!arrlist->data || arrlist->len + n > arrlist->capacity) {
-        arrlist_grow(TYPE_)(arrlist, n, 0, custom_realloc);
+void arrlist_meybe_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const len_to_grow, void* (*custom_realloc)(void*, size_t)) {
+    if (!arrlist->data || arrlist->len + len_to_grow > arrlist->capacity) {
+        arrlist_grow(TYPE_)(arrlist, len_to_grow, 0, custom_realloc);
     }
 }
 
 ///  #define stbds_arrput(a,v)      (stbds_arrmaybegrow(a,1), (a)[stbds_header(a)->length++] = (v))
 /// (T) void arrput(T* a, T b);
 ///   Appends the item b to the end of array a. Returns b.
-void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ value, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const value, void* (*custom_realloc)(void*, size_t)) {
     arrlist_meybe_grow(TYPE_)(arrlist, 1, custom_realloc);
     arrlist->data[arrlist->len++] = value;
 }
@@ -235,7 +235,7 @@ void arrlist_put(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ val
 /// #define stbds_arrput(a,v)      (stbds_arrmaybegrow(a,1), (a)[stbds_header(a)->length++] = (v))
 /// (T) void arrput(T* a, T b);
 ///   Appends the item b to the end of array a. Returns b.
-void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const* const value, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_ const* const restrict value, void* (*custom_realloc)(void*, size_t)) {
     arrlist_meybe_grow(TYPE_)(arrlist, 1, custom_realloc);
     arrlist->data[arrlist->len++] = *value;
 }
@@ -245,7 +245,7 @@ void arrlist_put_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], TYPE_
 /// (T) void arrins(T* a, int p, T b);
 ///   Inserts the item b into the middle of array a, into a[p],
 ///   moving the rest of the array over. Returns b.
-void arrlist_insert(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index, TYPE_ value, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_insert(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index, TYPE_ const value, void* (*custom_realloc)(void*, size_t)) {
     arrlist_insert_n(TYPE_)(arrlist, index, 1, custom_realloc);
     arrlist->data[index] = value;
 }
@@ -255,7 +255,7 @@ void arrlist_insert(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t
 /// size_t arraddnindex(T* a, int n)
 ///   Appends n uninitialized items onto array at the end.
 ///   Returns the index of the first uninitialized item added.
-size_t arrlist_add_index_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+size_t arrlist_add_index_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const n, void* (*custom_realloc)(void*, size_t)) {
     arrlist_meybe_grow(TYPE_)(arrlist, n, custom_realloc);
     if (n) {
         arrlist->len += n;
@@ -269,7 +269,7 @@ size_t arrlist_add_index_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1],
 /// void arrinsn(T* a, int p, int n);
 ///   Inserts n uninitialized items into array a starting at a[p],
 ///   moving the rest of the array over.
-void arrlist_insert_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t p, size_t n, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_insert_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const p, size_t const n, void* (*custom_realloc)(void*, size_t)) {
     arrlist_add_index_n(TYPE_)(arrlist, n, custom_realloc);
     memmove(&arrlist->data[p + n], &arrlist->data[p], sizeof(TYPE_) * (arrlist->len - n - p));
 }
@@ -278,7 +278,7 @@ void arrlist_insert_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
 /// #define stbds_arrdeln(a,i,n)   (memmove(&(a)[i], &(a)[(i)+(n)], sizeof *(a) * (stbds_header(a)->length-(n)-(i))), stbds_header(a)->length -= (n))
 /// void arrdeln(T* a, int p, int n);
 ///     Deletes n elements starting at a[p], moving the rest of the array over.
-void arrlist_del_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index, size_t n) {
+void arrlist_del_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index, size_t const n) {
     memmove(&arrlist->data[index], &arrlist->data[index + n], sizeof(TYPE_) * (arrlist->len - n - index));
     arrlist->len -= n;
 }
@@ -287,14 +287,14 @@ void arrlist_del_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t 
 // #define stbds_arrdel(a, i) stbds_arrdeln(a, i, 1)
 /// void arrdel(T* a, int p);
 ///   Deletes the element at a[p], moving the rest of the array over.
-void arrlist_del(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index) {
+void arrlist_del(TYPE_)(ArrayListOfT  arrlist[static const restrict 1], size_t const index) {
     arrlist_del_n(TYPE_)(arrlist, index, 1);
 }
 
 
 ///   Deletes the element at a[p], moving the rest of the array over.
 ///   Return the element.
-[[nodiscard]] TYPE_ arrlist_del_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index) {
+[[nodiscard]] TYPE_ arrlist_del_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index) {
     TYPE_ moved_element = arrlist->data[index];
     arrlist_del_n(TYPE_)(arrlist, index, 1);
     return moved_element;
@@ -305,7 +305,7 @@ void arrlist_del(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t in
 /// T* arraddnptr(T* a, int n)
 ///   Appends n uninitialized items onto array at the end.
 ///   Returns a pointer to the first uninitialized item added.
-TYPE_* arrlist_add_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+TYPE_* arrlist_add_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const n, void* (*custom_realloc)(void*, size_t)) {
     arrlist_meybe_grow(TYPE_)(arrlist, n, custom_realloc);
     if (n) {
         arrlist->len += n;
@@ -319,14 +319,14 @@ TYPE_* arrlist_add_ptr(TYPE_)(ArrayListOfT arrlist[static const restrict 1], siz
 /// void arrdelswap(T* a, int p);
 ///   Deletes the element at a[p], replacing it with the element from
 ///   the end of the array. O(1) performance.
-void arrlist_del_swap(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index) {
+void arrlist_del_swap(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index) {
     arrlist->data[index] = arrlist->data[arrlist->len - 1];
     arrlist->len -= 1;
 }
 
 ///   Deletes the element at a[p], replacing it with the element from
 ///   the end of the array. O(1) performance.
-[[nodiscard]] TYPE_ arrlist_del_swap_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t index) {
+[[nodiscard]] TYPE_ arrlist_del_swap_ret(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index) {
     TYPE_ moved_element = arrlist->data[index];
     arrlist->data[index] = arrlist->data[arrlist->len - 1];
     arrlist->len -= 1;
@@ -334,7 +334,7 @@ void arrlist_del_swap(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
 }
 
 
-TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t elem_size, size_t add_len, size_t min_cap, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t)) {
     size_t min_len = arrlist->len + add_len;
 
     // compute the minimum capacity needed
@@ -354,7 +354,7 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
         min_cap = 4;
     }
 
-    TYPE_* b_data = custom_realloc(arrlist->data, elem_size * min_cap);
+    TYPE_* b_data = custom_realloc(arrlist->data, sizeof(TYPE_) * min_cap);
     if (arrlist->data == nullptr) {
         arrlist->len = 0;
     }
@@ -365,15 +365,15 @@ TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
 
 
 /// #define stbds_arrgrow(a,b,c)   ((a) = stbds_arrgrowf_wrapper((a), sizeof *(a), (b), (c)))
-void arrlist_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t n, size_t cap, void* (*custom_realloc)(void* _Block, size_t _Size)) {
-    arrlist->data = arrlist_growff(TYPE_)(arrlist, sizeof(TYPE_), n, cap, custom_realloc);
+void arrlist_grow(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const len_to_grow, size_t const cap, void* (*custom_realloc)(void*, size_t)) {
+    arrlist->data = arrlist_growff(TYPE_)(arrlist, len_to_grow, cap, custom_realloc);
 }
 
 /// #define stbds_arrsetcap(a,cap)   (stbds_arrgrow(a,0,cap))
 /// (size_t) void arrsetcap(T* a, int cap);
 ///   Sets the length of allocated storage to at least `cap`. It will not
 ///   change the length of the array.
-void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t cap, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const cap, void* (*custom_realloc)(void*, size_t)) {
     arrlist_grow(TYPE_)(arrlist, 0, cap, custom_realloc);
 }
 
@@ -383,7 +383,7 @@ void arrlist_set_capacity(TYPE_)(ArrayListOfT arrlist[static const restrict 1], 
 /// void arrsetlen(T* a, int len);
 ///   Changes the length of the array to n. Allocates uninitialized
 ///   slots at the end if necessary.
-void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t len, void* (*custom_realloc)(void* _Block, size_t _Size)) {
+void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const len, void* (*custom_realloc)(void*, size_t)) {
     if (arrlist->capacity < len) {
         arrlist_set_capacity(TYPE_)(arrlist, len, custom_realloc);
     }
