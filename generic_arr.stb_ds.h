@@ -150,7 +150,7 @@ void arrlist_set_len(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_
 /// =======================                 =======================
 #ifdef IMPL_ARRAYLIST_
 
-TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t));
+static TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t));
 
 
 #include <string.h>
@@ -334,7 +334,7 @@ void arrlist_del_swap(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size
 }
 
 
-TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t)) {
+static TYPE_* arrlist_growff(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const add_len, size_t min_cap, void* (*custom_realloc)(void*, size_t)) {
     size_t min_len = arrlist->len + add_len;
 
     // compute the minimum capacity needed
