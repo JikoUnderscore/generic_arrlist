@@ -181,9 +181,9 @@ ArrayListOfT arrlist_init2(TYPE_)(size_t const capacity, void* (*custom_malloc)(
     return array;
 }
 
+#include <stdlib.h>
 
 void arrlist_deinit(TYPE_)(ArrayListOfT arrlist[static const restrict 1]) {
-#include <stdlib.h>
     free(arrlist->data);
     arrlist->data = nullptr;
     arrlist->len = 0;
@@ -199,7 +199,6 @@ void arrlist_deinit_unmanaged(TYPE_)(ArrayListOfT arrlist[static const restrict 
 
 
 void arrlist_void_deinit(TYPE_)(void* arrlist) {
-#include <stdlib.h>
     ArrayListOfT* arli = (ArrayListOfT*)arrlist;
     free(arli->data);
     arli->data = nullptr;
@@ -287,7 +286,7 @@ void arrlist_del_n(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t 
 // #define stbds_arrdel(a, i) stbds_arrdeln(a, i, 1)
 /// void arrdel(T* a, int p);
 ///   Deletes the element at a[p], moving the rest of the array over.
-void arrlist_del(TYPE_)(ArrayListOfT  arrlist[static const restrict 1], size_t const index) {
+void arrlist_del(TYPE_)(ArrayListOfT arrlist[static const restrict 1], size_t const index) {
     arrlist_del_n(TYPE_)(arrlist, index, 1);
 }
 
